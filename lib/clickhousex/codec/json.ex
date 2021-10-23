@@ -35,6 +35,10 @@ defmodule Clickhousex.Codec.JSON do
   end
 
   @impl Codec
+  def decode([]), do: {:ok, []}
+
+  def decode([[], response]), do: decode(response)
+
   def decode(response) do
     case Jason.decode(response) do
       {:ok, %{"meta" => meta, "data" => data, "rows" => row_count}} ->
@@ -42,12 +46,11 @@ defmodule Clickhousex.Codec.JSON do
         column_types = Enum.map(meta, & &1["type"])
 
         rows =
-          for row <- data do
+          Enum.map(data, fn row ->
             for {raw_value, column_type} <- Enum.zip(row, column_types) do
               to_native(column_type, raw_value)
             end
-            |> List.to_tuple()
-          end
+          end)
 
         {:ok, %{column_names: column_names, rows: rows, count: row_count}}
     end
