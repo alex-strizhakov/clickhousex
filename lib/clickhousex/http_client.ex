@@ -100,7 +100,7 @@ defmodule Clickhousex.HTTPClient do
   defp decode_response(conn, %Query{type: :select}, %Response{} = response) do
     case Response.decode(response) do
       {:ok, %{column_names: columns, rows: rows}} -> {:ok, conn, {:selected, columns, rows}}
-      {:error, error} -> {:error, conn, error.reason}
+      {:error, error} -> {:error, conn, error}
     end
   end
 
