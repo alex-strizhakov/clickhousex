@@ -26,9 +26,9 @@ defmodule Clickhousex.Protocol do
   def connect(opts) do
     opts =
       if opts[:ssl_opts] do
-        [transport_opts: opts[:ssl_opts]]
+        Keyword.put(opts, :transport_opts, opts[:ssl_opts])
       else
-        []
+        opts
       end
 
     scheme = opts[:scheme] || :http
