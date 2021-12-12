@@ -57,8 +57,9 @@ defmodule Clickhousex.HTTPClient do
 
   @req_headers [{"Content-Type", "text/plain"}]
 
-  def connect(scheme, host, port) do
-    Mint.HTTP.connect(scheme, host, port, mode: :passive)
+  def connect(scheme, host, port, opts \\ []) do
+    opts = Keyword.put(opts, :mode, :passive)
+    Mint.HTTP.connect(scheme, host, port, opts)
   end
 
   def disconnect(conn) do

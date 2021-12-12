@@ -24,6 +24,13 @@ defmodule Clickhousex.Protocol do
   @doc false
   @spec connect(opts :: Keyword.t()) :: {:ok, state} | {:error, Exception.t()}
   def connect(opts) do
+    opts =
+      if opts[:ssl_opts] do
+        [transport_opts: opts[:ssl_opts]]
+      else
+        []
+      end
+
     scheme = opts[:scheme] || :http
     hostname = opts[:hostname] || "localhost"
     port = opts[:port] || 8123
@@ -32,7 +39,7 @@ defmodule Clickhousex.Protocol do
     password = opts[:password]
     timeout = opts[:timeout] || Clickhousex.timeout()
 
-    {:ok, conn} = Client.connect(scheme, hostname, port)
+    {:ok, conn} = Client.connect(scheme, hostname, port, opts)
 
     response = Client.request(conn, @ping_query, @ping_params, timeout, username, password, database)
 
